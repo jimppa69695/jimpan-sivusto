@@ -359,12 +359,29 @@ document.getElementById("codeForm").addEventListener("submit", function(event) {
   const result = document.getElementById("codeResult");
 
   if (code === "A56xGURU") {
-    result.textContent = "🔥 Oikea koodi! A56xGURU hyväksytty!";
+    result.innerHTML = `
+      <div style="
+        margin-top: 25px;
+        padding: 25px 10px;
+        background: #25080c;
+        border: 2px solid #ff3045;
+        border-radius: 12px;
+        color: #ff3045;
+        font-size: clamp(30px, 7vw, 58px);
+        font-weight: 1000;
+        line-height: 1.1;
+        text-align: center;
+        text-transform: uppercase;
+        text-shadow: 0 0 18px rgba(255,48,69,.65);
+      ">
+        🔥 KYMCO JÄTTELEE<br>
+        MENNEN TULLEN! 🔥
+      </div>
+    `;
   } else {
-    result.textContent = "❌ Väärä koodi. Yritä uudelleen.";
+    result.textContent = "❌ VÄÄRÄ KOODI! YRITÄ UUDELLEEN.";
   }
 });
 </script>
-
 </body>
 </html>
