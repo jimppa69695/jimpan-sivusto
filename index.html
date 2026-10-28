@@ -1,236 +1,370 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fi">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#090909">
-  <meta name="description" content="Jimpan sivu — mopot, autot, pelit, retroelektroniikka, musiikki ja omat projektit.">
-  <title>Jimpan sivu</title>
-  <style>
-    :root {
-      --bg: #090909; --panel: #141414; --panel2: #1b1011; --red: #e11d2e;
-      --red2: #ff4554; --text: #f3eeee; --muted: #b4a9aa; --line: #3a2023;
-      --radius: 16px; --max: 1080px;
-    }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0; color: var(--text); background:
-        radial-gradient(ellipse at 80% 0%, rgba(150,0,20,.17), transparent 42%),
-        repeating-linear-gradient(135deg, rgba(255,255,255,.012) 0 1px, transparent 1px 7px), var(--bg);
-      font: 16px/1.6 system-ui, -apple-system, Segoe UI, sans-serif;
-    }
-    a { color: #ff6b75; }
-    a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid #ff6b75; outline-offset: 3px; }
-    .wrap { width: min(calc(100% - 32px), var(--max)); margin-inline: auto; }
-    header { border-bottom: 1px solid var(--line); background: rgba(8,8,8,.88); }
-    .topbar { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 14px; }
-    .brand { font-weight: 950; letter-spacing: .09em; text-decoration: none; color: var(--text); font-size: 1.15rem; text-shadow: 0 0 18px rgba(255,69,84,.16); }
-    .brand span { color: var(--red2); }
-    nav { display: flex; gap: 18px; flex-wrap: wrap; }
-    nav a { color: var(--muted); text-decoration: none; font-size: .92rem; }
-    nav a:hover { color: white; }
-    .hero { padding: 74px 0 54px; }
-    .eyebrow { color: var(--red2); text-transform: uppercase; letter-spacing: .2em; font-size: .78rem; font-weight: 850; }
-    h1 { font-size: clamp(2.7rem, 10vw, 6.5rem); line-height: .94; letter-spacing: -.065em; margin: 14px 0 22px; text-transform: uppercase; }
-    h1 span { color: var(--red); text-shadow: 0 0 30px rgba(225,29,46,.24); }
-    .hero p { max-width: 650px; color: var(--muted); font-size: 1.1rem; }
-    .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
-    .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 11px 17px; border-radius: 10px; border: 1px solid var(--red); background: var(--red); color: white; text-decoration: none; font-weight: 800; cursor: pointer; }
-    .btn.secondary { background: transparent; border-color: #583036; color: var(--text); }
-    section { padding: 38px 0; }
-    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
-    h2 { margin: 0; font-size: clamp(1.6rem, 5vw, 2.5rem); line-height: 1.1; text-transform: uppercase; letter-spacing: -.04em; }
-    .section-head p { margin: 0; max-width: 400px; color: var(--muted); font-size: .92rem; }
-    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-    .card { min-height: 200px; padding: 22px; background: linear-gradient(145deg, var(--panel2), var(--panel)); border: 1px solid var(--line); border-radius: var(--radius); position: relative; overflow: hidden; }
-    .card::after { content: ""; position: absolute; width: 100px; height: 4px; right: -20px; top: 22px; transform: rotate(45deg); background: var(--red); opacity: .8; }
-    .icon { font-size: 1.9rem; margin-bottom: 12px; }
-    .card h3 { margin: 0 0 8px; font-size: 1.2rem; }
-    .card p { color: var(--muted); margin: 0; }
-    .tag { display: inline-block; margin-top: 16px; padding: 4px 8px; border-radius: 999px; border: 1px solid #54282d; color: #ff929a; font-size: .75rem; font-weight: 750; }
-    .profile { display: grid; grid-template-columns: 1.1fr .9fr; gap: 18px; }
-    .panel { padding: 24px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); }
-    .panel p { color: var(--muted); }
-    footer { margin-top: 30px; padding: 28px 0 42px; border-top: 1px solid var(--line); color: var(--muted); font-size: .85rem; }
-    .tiny { font-size: .78rem; color: #95898a; }
-    .card, .panel, .gallery-item { transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease; }
-    .card:hover, .panel:hover, .gallery-item:hover { transform: translateY(-4px); border-color: #8a3039; box-shadow: 0 12px 32px rgba(225,29,46,.12); }
-    .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-    .tool-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-    .tool-btn { border: 1px solid #583036; background: #171112; color: var(--text); border-radius: 10px; padding: 9px 13px; font: inherit; font-weight: 750; cursor: pointer; }
-    .tool-btn[aria-pressed="true"] { border-color: var(--red2); box-shadow: 0 0 18px rgba(225,29,46,.18); }
-    .counter { color: var(--muted); font-size: .9rem; }
-    .gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-    .gallery-item { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); }
-    .gallery-item img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; filter: saturate(.75) contrast(1.05); }
-    .gallery-item p { margin: 0; padding: 12px 14px; color: var(--muted); font-size: .9rem; }
-    .sound-note { color: var(--muted); font-size: .82rem; }
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
-      .reveal { opacity: 1; transform: none; }
-    }
-    @media (max-width: 760px) {
-      .topbar { padding: 15px 0; align-items: flex-start; flex-direction: column; }
-      nav { gap: 12px; }
-      .hero { padding-top: 52px; }
-      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .profile { grid-template-columns: 1fr; }
-      .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
-    @media (max-width: 500px) {
-      .wrap { width: min(calc(100% - 22px), var(--max)); }
-      .grid { grid-template-columns: 1fr; }
-      .card { min-height: 0; }
-      .btn { width: 100%; }
-      .section-head { display: block; }
-      .section-head p { margin-top: 10px; }
-      .gallery { grid-template-columns: 1fr; }
-      .tool-row > * { max-width: 100%; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090909">
+<title>Jimpan sivu</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: #090909;
+  color: #f5f5f5;
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+}
+
+header {
+  background: #111;
+  padding: 20px;
+  border-bottom: 2px solid #e11d2e;
+}
+
+nav {
+  max-width: 1000px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.logo {
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.logo span {
+  color: #ff3045;
+}
+
+nav a {
+  color: #ddd;
+  text-decoration: none;
+  margin-left: 12px;
+}
+
+nav a:hover {
+  color: #ff3045;
+}
+
+.container {
+  width: 90%;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.hero {
+  padding: 85px 0 65px;
+  background: radial-gradient(ellipse at top right, #361015, #090909 65%);
+}
+
+.hero h1 {
+  font-size: clamp(42px, 9vw, 85px);
+  line-height: 1;
+  margin: 15px 0;
+  text-transform: uppercase;
+}
+
+.red {
+  color: #ff3045;
+}
+
+.hero p {
+  color: #bbb;
+  max-width: 650px;
+  font-size: 18px;
+}
+
+.button {
+  display: inline-block;
+  background: #e11d2e;
+  color: white;
+  padding: 12px 20px;
+  margin-top: 15px;
+  border-radius: 7px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.button:hover {
+  background: #ff3045;
+}
+
+section {
+  padding: 45px 0;
+}
+
+h2 {
+  font-size: 32px;
+  text-transform: uppercase;
+  margin-top: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.card {
+  background: linear-gradient(145deg, #201012, #141414);
+  border: 1px solid #472126;
+  border-radius: 12px;
+  padding: 22px;
+  transition: 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: #ff3045;
+}
+
+.card .icon {
+  font-size: 32px;
+}
+
+.card h3 {
+  margin-bottom: 8px;
+}
+
+.card p {
+  color: #bbb;
+  margin-bottom: 0;
+}
+
+.panel {
+  background: #141414;
+  border: 1px solid #472126;
+  border-radius: 12px;
+  padding: 25px;
+  margin-top: 20px;
+}
+
+input {
+  background: #090909;
+  color: white;
+  border: 1px solid #633039;
+  border-radius: 6px;
+  padding: 12px;
+  width: 100%;
+  max-width: 320px;
+  font-size: 16px;
+}
+
+button {
+  background: #e11d2e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 18px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 8px 0;
+}
+
+button:hover {
+  background: #ff3045;
+}
+
+#codeResult {
+  color: #ff6977;
+  overflow-wrap: anywhere;
+}
+
+footer {
+  margin-top: 40px;
+  padding: 25px;
+  text-align: center;
+  border-top: 1px solid #472126;
+  color: #888;
+}
+
+@media (max-width: 700px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  nav {
+    align-items: flex-start;
+  }
+
+  nav a {
+    margin-left: 0;
+    margin-right: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    padding-top: 55px;
+  }
+}
+</style>
 </head>
+
 <body>
+
 <header>
-  <div class="wrap topbar">
-    <a class="brand" href="#top">Jimpan <span>sivu</span></a>
-    <nav aria-label="Päänavigaatio">
+  <nav>
+    <a class="logo" href="#top">JIMPAN <span>SIVU</span></a>
+
+    <div>
       <a href="#harrastukset">Harrastukset</a>
-      <a href="#minusta">Profiili</a>
-      <a href="#galleria">Galleria</a>
-    </nav>
-  </div>
+      <a href="#minusta">Minusta</a>
+      <a href="#koodi">Salainen koodi</a>
+    </div>
+  </nav>
 </header>
 
 <main id="top">
-  <div class="wrap hero">
-    <div class="eyebrow">/// Jimpan sivu · Finland</div>
-    <h1>Jimpan<br><span>sivu.</span></h1>
-    <p>Mopot, vanhat autot, pelit, retroelektroniikka ja raskas musiikki. Tervetuloa sivulleni — täällä ruoste, riffit ja vanha tekniikka kuuluvat asiaan.</p>
-    <div class="actions">
-      <a class="btn" href="#harrastukset">Tutustu harrastuksiin ↓</a>
-      <a class="btn secondary" href="#galleria">Katso galleria</a>
-    </div>
-    <div class="tool-row" style="margin-top:22px">
-      <button class="tool-btn" id="soundToggle" type="button" aria-pressed="false">🔇 Äänitehosteet: pois</button>
-      <span class="sound-note">Pienet käyttöliittymä-äänet ovat vapaaehtoisia — eivät käynnisty itsestään.</span>
+
+  <div class="hero">
+    <div class="container">
+      <p class="red"><strong>/// GARAGE OF CHAOS</strong></p>
+
+      <h1>Jimpan<br><span class="red">sivu.</span></h1>
+
+      <p>
+        Mopot, autot, pelit, retroelektroniikka ja raskas musiikki.
+        Tervetuloa Jimpan omalle sivulle!
+      </p>
+
+      <a class="button" href="#harrastukset">TUTUSTU SIVUUN ↓</a>
     </div>
   </div>
 
   <section id="harrastukset">
-    <div class="wrap">
-      <div class="section-head">
-        <h2>Harrastukset<span style="color:var(--red)">_</span></h2>
-        <p>Ajoneuvot, pelit, vanha tekniikka ja muut omat kiinnostuksen kohteet.</p>
-      </div>
-      <div class="grid">
-        <article class="card"><div class="icon" aria-hidden="true">🛵</div><h3>Kymco ZX Super Fever</h3><p>Skootteriprojektit, osat, pakoputket ja pienten moottorien ihmettely.</p><span class="tag">TWO-STROKE VIBES</span></article>
-        <article class="card"><div class="icon" aria-hidden="true">🚗</div><h3>Nissan Sunny N13</h3><p>Vanhan sedanin tekniikkaa, osia ja ysäriajan autofiilistä.</p><span class="tag">OLD SCHOOL</span></article>
-        <article class="card"><div class="icon" aria-hidden="true">🎮</div><h3>GTA V</h3><p>Autot, virittely, pelimaailman tutkiminen ja PC-pelaaminen.</p><span class="tag">LOS SANTOS</span></article>
-        <article class="card"><div class="icon" aria-hidden="true">📺</div><h3>Retroelektroniikka</h3><p>Vanha Xbox, kuvaputkitelkkarit, Windows 95 ja laitteet, joilla on tarina.</p><span class="tag">REPAIR · RESTORE</span></article>
-        <article class="card"><div class="icon" aria-hidden="true">🤘</div><h3>Metalli</h3><p>Death metal, Children of Bodom ja omat raskaan musiikin ideat.</p><span class="tag">LOUDER</span></article>
-        <article class="card"><div class="icon" aria-hidden="true">🐕</div><h3>Karvainen kaveri</h3><p>Tummanruskea chihuahua–lapinpystykorva-sekoitus kuuluu porukkaan.</p><span class="tag">GARAGE GUARDIAN</span></article>
-        <article class="card"><div class="icon" aria-hidden="true">🕹️</div><h3>Vanhat pelit</h3><p>Retro-PC:t, konsolit ja pelit, joissa on vanhan ajan tunnelmaa.</p><span class="tag">RETRO GAMING</span></article>
-        <article class="card"><div class="icon" aria-hidden="true">🔧</div><h3>Tee-se-itse</h3><p>Vikojen selvittelyä, korjaamista ja uusien asioiden opettelua.</p><span class="tag">FIX IT YOURSELF</span></article>
-        <article class="card"><div class="icon" aria-hidden="true">❄️</div><h3>Pohjoinen luonto</h3><p>Talvi, lumi, ulkoilu ja Lapin maisemat.</p><span class="tag">NORTH SIDE</span></article>
-      </div>
-    </div>
-  </section>
+    <div class="container">
+      <h2>Harrastukset<span class="red">_</span></h2>
 
-  <section id="galleria">
-    <div class="wrap">
-      <div class="section-head">
-        <h2>Galleria<span style="color:var(--red)">_</span></h2>
-        <p>Oma projektikuva sekä autotallin ja tekniikan tunnelmaa. Lisää omia kuvia lähettämällä ne GitHub-repositorioon.</p>
-      </div>
-      <div class="gallery">
-        <article class="gallery-item"><img src="auton-sisusta.jpg" alt="Oma kuva vanhan auton sisustasta ja keskikonsolista projektin aikana" loading="lazy"><p>Oma projektikuva – auton sisusta</p></article>
-        <article class="gallery-item"><img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=900&q=80" alt="Värikäs retropelien ja elektroniikan tunnelma" loading="lazy"><p>Retroelektroniikka</p></article>
-        <article class="gallery-item"><img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=900&q=80" alt="Musiikkilaitteita studiossa" loading="lazy"><p>Musiikki ja soundit</p></article>
+      <div class="grid">
+
+        <article class="card">
+          <div class="icon">🛵</div>
+          <h3>Kymco ZX</h3>
+          <p>Mopot, viritysosat, pakoputket ja talliprojektit.</p>
+        </article>
+
+        <article class="card">
+          <div class="icon">🚗</div>
+          <h3>Nissan Sunny N13</h3>
+          <p>Vanha kunnon ysäriauto ja kaikenlaiset autoprojektit.</p>
+        </article>
+
+        <article class="card">
+          <div class="icon">🎮</div>
+          <h3>GTA V</h3>
+          <p>Autot, pelailu ja Los Santosin tutkiminen.</p>
+        </article>
+
+        <article class="card">
+          <div class="icon">📺</div>
+          <h3>Retroelektroniikka</h3>
+          <p>Vanha Xbox, kuvaputkitelkkarit ja retro-PC:t.</p>
+        </article>
+
+        <article class="card">
+          <div class="icon">🤘</div>
+          <h3>Metallimusiikki</h3>
+          <p>Death metal, Children of Bodom ja omat musiikki-ideat.</p>
+        </article>
+
+        <article class="card">
+          <div class="icon">🔧</div>
+          <h3>Tee-se-itse</h3>
+          <p>Korjaamista, rakentelua ja tekniikan opettelua.</p>
+        </article>
+
       </div>
     </div>
   </section>
 
   <section id="minusta">
-    <div class="wrap profile">
+    <div class="container">
       <div class="panel">
-        <div class="eyebrow">User file // 001</div>
-        <h2>Ei turhaa kiiltoa.</h2>
-        <p>Kiinnostuksen kohteina ovat vanhat koneet, ajoneuvojen ropaaminen, pelit ja raskas musiikki. Tavoitteena ei ole täydellinen pinta — vaan toimiva laite, hyvä soundi ja kiinnostava projekti.</p>
-      </div>
-      <div class="panel">
-        <div class="eyebrow">Sivun työkalut</div>
-        <h2>Kaikkien käynnit.</h2>
-        <div class="counterapi" key="jimpan-sivu" label="käyntiä" color="#ff4554" style="min-height:44px" aria-live="polite">Ladataan yhteistä käyntilaskuria…</div>
-        <p class="tiny">Yhteinen laskuri käyttää ulkoista CounterAPI-palvelua. Laskuri näkyy, kun palvelu on saatavilla.</p>
-      </div>
-      <div class="panel">
-        <div class="eyebrow">Status</div>
-        <h2>Always tinkering.</h2>
-        <p>Projekteja tulee ja menee. Tätä sivua voi laajentaa uusilla kuvilla, projekteilla ja päivityksillä.</p>
-        <p class="tiny">Vinkki: älä julkaise sivulla kotiosoitetta, salasanoja, puhelinnumeroa tai muuta yksityistä tietoa.</p>
+        <h2>Minusta<span class="red">_</span></h2>
+
+        <p>
+          Täällä yhdistyvät vanhat koneet, mopot, autot, pelit
+          ja raskas musiikki. Tarkoitus on tehdä omannäköinen
+          sivu, jota voi kehittää uusilla projekteilla.
+        </p>
+
+        <p class="red"><strong>NO RULES. JUST PROJECTS.</strong></p>
       </div>
     </div>
   </section>
+
+  <section id="koodi">
+    <div class="container">
+      <div class="panel">
+        <h2>Salainen koodi<span class="red">_</span></h2>
+
+        <p>Onko sinulla oikea koodi?</p>
+
+        <form id="codeForm">
+          <input
+            type="password"
+            id="secretCode"
+            placeholder="Syötä koodi..."
+            autocomplete="off"
+            aria-label="Salainen koodi"
+            required
+          >
+
+          <br>
+
+          <button type="submit">TARKISTA KOODI</button>
+        </form>
+
+        <p id="codeResult" aria-live="polite"></p>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <footer>
-  <div class="wrap">© <span id="year"></span> Jimpan sivu · Made for machines, games &amp; heavy riffs.<br><span class="tiny">Fanisivu / henkilökohtainen harrastusprofiili. Ei liity GTA V:n tai muiden mainittujen brändien omistajiin.</span></div>
+  © <span id="year"></span> Jimpan sivu
+  <br>
+  Built for machines, games &amp; heavy riffs.
 </footer>
 
-<script src="https://counterapi.com/c.js?ns=jimppos123456.github.io" async></script>
 <script>
-  document.getElementById("year").textContent = new Date().getFullYear();
+document.getElementById("year").textContent =
+  new Date().getFullYear();
 
-  const revealItems = document.querySelectorAll(".card, .panel, .gallery-item");
-  revealItems.forEach(item => item.classList.add("reveal"));
-  if ("IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("visible");
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.12 });
-    revealItems.forEach(item => observer.observe(item));
+document.getElementById("codeForm").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const code = document.getElementById("secretCode").value;
+  const result = document.getElementById("codeResult");
+
+  if (code === "A56xGURU") {
+    result.textContent = "🔥 Oikea koodi! A56xGURU hyväksytty!";
   } else {
-    revealItems.forEach(item => item.classList.add("visible"));
+    result.textContent = "❌ Väärä koodi. Yritä uudelleen.";
   }
-
-  let soundsEnabled = false;
-  let audioContext;
-  const soundToggle = document.getElementById("soundToggle");
-  function clickTone() {
-    if (!soundsEnabled) return;
-    try {
-      audioContext = audioContext || new (window.AudioContext || window.webkitAudioContext)();
-      if (audioContext.state === "suspended") audioContext.resume();
-      const oscillator = audioContext.createOscillator();
-      const gain = audioContext.createGain();
-      oscillator.type = "triangle";
-      oscillator.frequency.setValueAtTime(520, audioContext.currentTime);
-      oscillator.frequency.exponentialRampToValueAtTime(260, audioContext.currentTime + 0.07);
-      gain.gain.setValueAtTime(0.035, audioContext.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.08);
-      oscillator.connect(gain);
-      gain.connect(audioContext.destination);
-      oscillator.start();
-      oscillator.stop(audioContext.currentTime + 0.085);
-    } catch (error) {}
-  }
-  soundToggle.addEventListener("click", () => {
-    soundsEnabled = !soundsEnabled;
-    soundToggle.setAttribute("aria-pressed", String(soundsEnabled));
-    soundToggle.textContent = soundsEnabled ? "🔊 Äänitehosteet: päällä" : "🔇 Äänitehosteet: pois";
-    clickTone();
-  });
-  document.querySelectorAll(".btn, nav a, .tool-btn").forEach(element => {
-    element.addEventListener("click", () => {
-      if (element !== soundToggle) clickTone();
-    });
-  });
+});
 </script>
+
 </body>
 </html>
